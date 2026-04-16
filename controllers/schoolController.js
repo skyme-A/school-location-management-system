@@ -1,18 +1,23 @@
 const db = require("../config/db");
 
 const addSchool = (req, res) => {
-    const { name, latitude, longitude } = req.body;
+    const { name, address, latitude, longitude } = req.body;
 
-    const sql =
-        "INSERT INTO schools (name, latitude, longitude) VALUES (?, ?, ?)";
+    const sql = `
+        INSERT INTO schools (name, address, latitude, longitude)
+        VALUES (?, ?, ?, ?)
+    `;
 
-    db.query(sql, [name, latitude, longitude], (err, result) => {
+    db.query(sql, [name, address, latitude, longitude], (err, result) => {
         if (err) {
             console.log("DB Error:", err);
-            return res.status(500).json(err);
+            return res.status(500).json({
+                success: false,
+                error: err.message,
+            });
         }
 
-        res.json({
+        res.status(201).json({
             success: true,
             message: "School added successfully",
         });
@@ -25,10 +30,13 @@ const listSchools = (req, res) => {
     db.query(sql, (err, result) => {
         if (err) {
             console.log("DB Error:", err);
-            return res.status(500).json(err);
+            return res.status(500).json({
+                success: false,
+                error: err.message,
+            });
         }
 
-        res.json(result);
+        res.status(200).json(result);
     });
 };
 
