@@ -73,36 +73,37 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen transition-all duration-500 ${
+      className={`min-h-screen overflow-x-hidden transition-all duration-500 ${
         darkMode
           ? "bg-gradient-to-br from-[#160024] via-[#2d0050] to-[#3b0080] text-white"
           : "bg-gradient-to-br from-[#f8f7ff] via-[#ffffff] to-[#eef2ff] text-slate-900"
       }`}
     >
+      {/* Glow */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/20 blur-3xl rounded-full"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/15 blur-3xl rounded-full"></div>
 
       <div className="relative flex min-h-screen">
 
         {/* Sidebar */}
         <aside
-          className={`w-64 p-8 border-r backdrop-blur-xl ${
+          className={`w-72 px-8 pt-16 pb-8 border-r backdrop-blur-xl ${
             darkMode
               ? "border-white/10 bg-white/5"
               : "border-slate-200 bg-white/60"
           }`}
         >
-          <h1 className="text-3xl font-black mb-10">🏫 SchoolOS</h1>
+          <h1 className="text-3xl font-black mb-10 tracking-tight">🏫 SchoolOS</h1>
 
           <div className="space-y-5">
 
-            <div className="p-5 rounded-3xl bg-gradient-to-r from-purple-600 to-blue-600 shadow-2xl">
+            <div className="p-5 rounded-3xl bg-gradient-to-r from-purple-600 to-blue-600 shadow-2xl hover:-translate-y-1 transition-all duration-300">
               <p className="opacity-80">Total Schools</p>
               <h2 className="text-4xl font-bold">{schools.length}</h2>
             </div>
 
             <div
-              className={`p-5 rounded-3xl ${
+              className={`p-5 rounded-3xl hover:-translate-y-1 transition-all duration-300 ${
                 darkMode ? "bg-white/10" : "bg-white/70 shadow"
               }`}
             >
@@ -112,7 +113,7 @@ export default function App() {
                 placeholder="Search by school name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className={`w-full p-3 rounded-2xl border outline-none ${
+                className={`w-full p-3 rounded-2xl border outline-none focus:ring-2 focus:ring-purple-500/40 transition-all duration-300 ${
                   darkMode
                     ? "bg-white/10 border-white/10"
                     : "bg-white text-slate-900 border-slate-200"
@@ -123,19 +124,21 @@ export default function App() {
         </aside>
 
         {/* Main */}
-        <main className="flex-1 p-10">
+        <main className="flex-1 px-12 pt-16 pb-10 max-w-[1400px] mx-auto w-full">
 
-          {/* Clean Header */}
+          {/* Header */}
           <div className="mb-10 flex justify-between items-start">
             <div>
-              <h2 className="text-5xl font-black leading-tight">School Dashboard</h2>
+              <h2 className="text-6xl font-black tracking-tight leading-tight">
+                School Dashboard
+              </h2>
 
-              <p className={`${darkMode ? "text-slate-300" : "text-slate-500"} mt-3 text-lg`}>
+              <p className={`${darkMode ? "text-slate-300" : "text-slate-500"} text-xl mt-3 opacity-80`}>
                 Premium school location manager
               </p>
 
               <div
-                className={`inline-block mt-4 px-4 py-2 rounded-xl ${
+                className={`inline-block mt-4 px-3 py-1.5 rounded-full text-sm font-medium ${
                   darkMode ? "bg-white/10" : "bg-white shadow"
                 }`}
               >
@@ -155,14 +158,14 @@ export default function App() {
             </button>
           </div>
 
-          {/* Main Grid */}
+          {/* Grid */}
           <div className="grid lg:grid-cols-2 gap-10 items-start">
 
             {/* Add School */}
             <div
-              className={`rounded-3xl p-8 min-h-[620px] backdrop-blur-xl shadow-2xl hover:-translate-y-1 transition-all duration-300 ${
+              className={`rounded-3xl p-8 min-h-[620px] hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_60px_rgba(0,0,0,0.18)] ${
                 darkMode
-                  ? "bg-white/10 border border-white/10"
+                  ? "bg-white/8 backdrop-blur-2xl border border-white/10"
                   : "bg-white/80 border border-slate-200"
               }`}
             >
@@ -181,7 +184,7 @@ export default function App() {
                         [field]: e.target.value
                       })
                     }
-                    className={`w-full p-4 rounded-2xl border outline-none ${
+                    className={`w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-purple-500/40 transition-all duration-300 ${
                       darkMode
                         ? "bg-white/10 border-white/10"
                         : "bg-white text-slate-900 border-slate-200"
@@ -191,7 +194,7 @@ export default function App() {
 
                 <button
                   onClick={addSchool}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 font-semibold text-white hover:scale-[1.02] transition-all duration-300"
+                  className="w-full py-5 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 font-semibold text-white hover:scale-[1.02] hover:shadow-2xl active:scale-[0.99] transition-all duration-300"
                 >
                   Add School
                 </button>
@@ -200,9 +203,9 @@ export default function App() {
 
             {/* Saved Schools */}
             <div
-              className={`rounded-3xl p-8 min-h-[620px] backdrop-blur-xl shadow-2xl hover:-translate-y-1 transition-all duration-300 ${
+              className={`rounded-3xl p-8 min-h-[620px] hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_60px_rgba(0,0,0,0.18)] ${
                 darkMode
-                  ? "bg-white/10 border border-white/10"
+                  ? "bg-white/8 backdrop-blur-2xl border border-white/10"
                   : "bg-white/80 border border-slate-200"
               }`}
             >
@@ -211,8 +214,9 @@ export default function App() {
               <div className="space-y-5 max-h-[520px] overflow-y-auto pr-2">
 
                 {filteredSchools.length === 0 && (
-                  <div className="flex items-center justify-center h-[400px] opacity-50 text-lg">
-                    No schools added yet 📍
+                  <div className="flex flex-col items-center justify-center h-[420px] opacity-50">
+                    <div className="text-5xl mb-3">📍</div>
+                    <div className="text-lg">No schools added yet</div>
                   </div>
                 )}
 
@@ -225,11 +229,13 @@ export default function App() {
                         : "bg-white shadow border border-slate-200"
                     }`}
                   >
-                    <h4 className="text-lg font-bold">{school.name}</h4>
-                    <p className="opacity-70 mt-1">{school.address}</p>
+                    <div className="space-y-2">
+                      <h4 className="text-lg font-bold">{school.name}</h4>
+                      <p className="opacity-70">{school.address}</p>
 
-                    <div className="mt-3 text-sm opacity-60">
-                      Lat: {school.latitude} | Lng: {school.longitude}
+                      <div className="text-sm opacity-60">
+                        Lat: {school.latitude} | Lng: {school.longitude}
+                      </div>
                     </div>
 
                     <iframe
