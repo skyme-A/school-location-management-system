@@ -1,15 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
 
 export default function App() {
   const API = "https://school-location-management-system.onrender.com/api";
 
   const [schools, setSchools] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedSchool, setSelectedSchool] = useState(null);
-  const [editingSchool, setEditingSchool] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -20,19 +15,11 @@ export default function App() {
 
   const fetchSchools = async () => {
     try {
-      setLoading(true);
       const res = await fetch(`${API}/listSchools`);
       const data = await res.json();
-
       setSchools(Array.isArray(data) ? data : []);
-
-      if (Array.isArray(data) && data.length > 0) {
-        setSelectedSchool(data[0]);
-      }
     } catch (err) {
-      toast.error("Failed to fetch schools");
-    } finally {
-      setLoading(false);
+      console.log(err);
     }
   };
 
@@ -41,63 +28,27 @@ export default function App() {
   }, []);
 
   const addSchool = async () => {
-    if (!form.name || !form.address || !form.latitude || !form.longitude) {
-      toast.error("All fields required");
-      return;
-    }
+    if (!form.name || !form.address || !form.latitude || !form.longitude) return;
 
     try {
       await fetch(`${API}/addSchool`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
       });
-
-      toast.success("School added");
 
       setForm({
         name: "",
         address: "",
         latitude: "",
-        longitude: "",
+        longitude: ""
       });
 
       fetchSchools();
-    } catch {
-      toast.error("Add failed");
-    }
-  };
-
-  const deleteSchool = async (id) => {
-    if (!window.confirm("Delete school?")) return;
-
-    try {
-      await fetch(`${API}/deleteSchool/${id}`, {
-        method: "DELETE",
-      });
-
-      toast.success("Deleted");
-      fetchSchools();
-    } catch {
-      toast.error("Delete failed");
-    }
-  };
-
-  const updateSchool = async () => {
-    if (!editingSchool) return;
-
-    try {
-      await fetch(`${API}/updateSchool/${editingSchool.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingSchool),
-      });
-
-      toast.success("Updated");
-      setEditingSchool(null);
-      fetchSchools();
-    } catch {
-      toast.error("Update failed");
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -108,37 +59,61 @@ export default function App() {
   }, [schools, search]);
 
   return (
-    <div className={darkMode ? "min-h-screen bg-slate-950 text-white" : "min-h-screen bg-slate-100 text-slate-900"}>
-      <Toaster position="top-right" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
 
       <div className="flex min-h-screen">
-        <aside className="w-72 p-6 border-r border-white/10 bg-white/5">
-          <h1 className="text-2xl font-black mb-8">🏫 SchoolOS</h1>
 
-          <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-violet-600">
-              <p>Total Schools</p>
-              <h2 className="text-3xl font-bold">{schools.length}</h2>
+        {/* Sidebar */}
+        <aside className="w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200 p-8 shadow-sm">
+
+          <h1 className="text-3xl font-semibold text-slate-900 mb-10">
+            🏫 SchoolOS
+          </h1>
+
+          <div className="space-y-5">
+
+            <div className="p-5 rounded-3xl bg-slate-900 text-white shadow-lg">
+              <p className="text-sm opacity-70">Total Schools</p>
+              <h2 className="text-4xl font-bold mt-2">{schools.length}</h2>
             </div>
 
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="w-full py-3 rounded-2xl bg-slate-700"
-            >
-              {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
+            <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm">
+              <p className="text-sm text-slate-500">Search Schools</p>
+
+              <input
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="mt-3 w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 outline-none"
+              />
+            </div>
+
           </div>
         </aside>
 
-        <main className="flex-1 p-8">
-          <h2 className="text-4xl font-black mb-6">School Dashboard</h2>
+        {/* Main */}
+        <main className="flex-1 p-10">
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="mb-10">
+            <h2 className="text-5xl font-semibold text-slate-900 tracking-tight">
+              School Dashboard
+            </h2>
+            <p className="text-slate-500 mt-2 text-lg">
+              Premium school location manager
+            </p>
+          </div>
 
-            <div className="rounded-3xl p-6 border bg-white/5">
-              <h3 className="text-2xl font-bold mb-4">Add School</h3>
+          <div className="grid lg:grid-cols-2 gap-8">
+
+            {/* Add School */}
+            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-200 p-8">
+
+              <h3 className="text-2xl font-semibold text-slate-900 mb-6">
+                Add New School
+              </h3>
 
               <div className="space-y-4">
+
                 {["name", "address", "latitude", "longitude"].map((field) => (
                   <input
                     key={field}
@@ -150,118 +125,57 @@ export default function App() {
                         [field]: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-xl text-black"
+                    className="w-full p-4 rounded-2xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300"
                   />
                 ))}
 
                 <button
                   onClick={addSchool}
-                  className="w-full py-3 rounded-xl bg-violet-600"
+                  className="w-full py-4 rounded-2xl bg-slate-900 text-white font-medium hover:bg-slate-800 transition"
                 >
                   Add School
                 </button>
               </div>
             </div>
 
-            <div className="rounded-3xl p-6 border bg-white/5">
-              <h3 className="text-2xl font-bold mb-4">Schools</h3>
+            {/* School List */}
+            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-200 p-8">
 
-              <input
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl mb-4 text-black"
-              />
+              <h3 className="text-2xl font-semibold text-slate-900 mb-6">
+                Saved Schools
+              </h3>
 
-              {loading ? (
-                <div>Loading...</div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredSchools.map((school) => (
-                    <div
-                      key={school.id}
-                      className="p-4 rounded-xl bg-white/10"
-                      onClick={() => setSelectedSchool(school)}
-                    >
-                      <h4>{school.name}</h4>
-                      <p>{school.address}</p>
+              <div className="space-y-5 max-h-[650px] overflow-y-auto pr-2">
 
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingSchool(school);
-                          }}
-                          className="px-3 py-1 bg-blue-500 rounded"
-                        >
-                          Edit
-                        </button>
+                {filteredSchools.map((school) => (
+                  <div
+                    key={school.id}
+                    className="p-5 rounded-3xl bg-slate-50 border border-slate-200 hover:shadow-md transition"
+                  >
+                    <h4 className="text-lg font-semibold text-slate-900">
+                      {school.name}
+                    </h4>
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteSchool(school.id);
-                          }}
-                          className="px-3 py-1 bg-red-500 rounded"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                    <p className="text-slate-500 mt-1">{school.address}</p>
+
+                    <div className="mt-3 text-sm text-slate-400">
+                      Lat: {school.latitude} | Lng: {school.longitude}
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    <iframe
+                      title={school.name}
+                      className="w-full h-52 rounded-2xl mt-4 border"
+                      src={`https://www.google.com/maps?q=${school.latitude},${school.longitude}&output=embed`}
+                    />
+                  </div>
+                ))}
+
+              </div>
             </div>
 
-            <div className="rounded-3xl p-4 border bg-white/5">
-              <h3 className="text-2xl font-bold mb-4">Map</h3>
-
-              {selectedSchool ? (
-                <iframe
-                  title="map"
-                  width="100%"
-                  height="400"
-                  src={`https://www.google.com/maps?q=${selectedSchool.latitude},${selectedSchool.longitude}&output=embed`}
-                />
-              ) : (
-                <div>Select school</div>
-              )}
-            </div>
           </div>
         </main>
       </div>
-
-      {editingSchool && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white text-black p-8 rounded-2xl w-[400px]">
-            <h2 className="text-xl font-bold mb-4">Edit School</h2>
-
-            {["name", "address", "latitude", "longitude"].map((field) => (
-              <input
-                key={field}
-                value={editingSchool[field]}
-                onChange={(e) =>
-                  setEditingSchool({
-                    ...editingSchool,
-                    [field]: e.target.value,
-                  })
-                }
-                className="w-full px-4 py-3 rounded-xl border mb-3"
-              />
-            ))}
-
-            <div className="flex gap-3">
-              <button onClick={updateSchool} className="flex-1 py-3 bg-violet-600 text-white rounded-xl">
-                Save
-              </button>
-
-              <button onClick={() => setEditingSchool(null)} className="flex-1 py-3 bg-slate-300 rounded-xl">
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
