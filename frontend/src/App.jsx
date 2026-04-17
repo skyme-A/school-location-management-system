@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
-import { motion } from "framer-motion";
 
 function App() {
   const API = "https://school-location-management-system.onrender.com/api";
@@ -48,12 +47,14 @@ function App() {
     try {
       await axios.post(`${API}/addSchool`, form);
       toast.success("School added");
+
       setForm({
         name: "",
         address: "",
         latitude: "",
         longitude: "",
       });
+
       fetchSchools();
     } catch {
       toast.error("Add failed");
@@ -129,21 +130,13 @@ function App() {
     >
       <Toaster position="top-right" />
 
-      {/* Premium glow */}
       <div className="absolute top-0 left-0 w-[420px] h-[420px] bg-violet-500/20 blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 right-0 w-[420px] h-[420px] bg-blue-500/20 blur-3xl rounded-full"></div>
-      <div className="absolute top-1/2 left-1/3 w-[300px] h-[300px] bg-fuchsia-500/10 blur-3xl rounded-full"></div>
 
       <div className="relative flex min-h-screen">
 
         {/* Sidebar */}
-        <aside
-          className={`w-72 p-6 border-r ${
-            darkMode
-              ? "bg-white/5 border-white/10 backdrop-blur-xl"
-              : "bg-white/70 border-slate-200 backdrop-blur-xl"
-          }`}
-        >
+        <aside className="w-72 p-6 border-r bg-white/5 backdrop-blur-xl border-white/10">
           <h1 className="text-2xl font-black mb-8">🏫 SchoolOS</h1>
 
           <div className="space-y-4">
@@ -168,7 +161,7 @@ function App() {
 
             <button
               onClick={exportCSV}
-              className="w-full py-3 rounded-2xl bg-blue-500/20 hover:bg-blue-500/30 transition-all"
+              className="w-full py-3 rounded-2xl bg-blue-500/20"
             >
               Export CSV
             </button>
@@ -178,21 +171,19 @@ function App() {
         {/* Main */}
         <main className="flex-1 p-8">
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="text-5xl md:text-6xl font-black tracking-tight mb-2 leading-tight">
+          <div>
+            <h2 className="text-5xl md:text-6xl font-black tracking-tight mb-2">
               School Dashboard
             </h2>
             <p className={`${darkMode ? "text-slate-400" : "text-slate-600"}`}>
               Smart school location management platform
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid lg:grid-cols-3 gap-8 mt-8">
 
             {/* Form */}
-            <div className={`rounded-3xl p-6 shadow-2xl border border-white/10 backdrop-blur-xl ${
-              darkMode ? "bg-white/5" : "bg-white/80"
-            }`}>
+            <div className="rounded-3xl p-6 shadow-2xl border border-white/10 backdrop-blur-xl bg-white/5">
               <h3 className="text-2xl font-bold mb-5">Add School</h3>
 
               <div className="space-y-4">
@@ -207,13 +198,13 @@ function App() {
                         [field]: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/10 focus:ring-2 focus:ring-violet-500 outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/10 focus:ring-2 focus:ring-violet-500 outline-none"
                   />
                 ))}
 
                 <button
                   onClick={addSchool}
-                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 font-semibold shadow-xl hover:scale-[1.02] transition-all duration-300"
+                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 font-semibold"
                 >
                   Add School
                 </button>
@@ -221,9 +212,7 @@ function App() {
             </div>
 
             {/* List */}
-            <div className={`rounded-3xl p-6 shadow-2xl border border-white/10 backdrop-blur-xl ${
-              darkMode ? "bg-white/5" : "bg-white/80"
-            }`}>
+            <div className="rounded-3xl p-6 shadow-2xl border border-white/10 backdrop-blur-xl bg-white/5">
               <h3 className="text-2xl font-bold">Schools</h3>
               <p className="text-sm opacity-60 mb-4">Manage registered locations</p>
 
@@ -231,26 +220,15 @@ function App() {
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl mb-4 border border-white/10 bg-white/10 focus:ring-2 focus:ring-violet-500 outline-none"
+                className="w-full px-4 py-3 rounded-2xl mb-4 border border-white/10 bg-white/10"
               />
-
-              {!loading && paginatedSchools.length === 0 && (
-                <div className="text-center py-16 opacity-60">
-                  No schools found 🏫
-                </div>
-              )}
 
               <div className="space-y-3 max-h-[420px] overflow-y-auto">
                 {paginatedSchools.map((school) => (
-                  <motion.div
+                  <div
                     key={school.id}
-                    whileHover={{ scale: 1.02 }}
                     onClick={() => setSelectedSchool(school)}
-                    className={`p-4 rounded-2xl cursor-pointer hover:shadow-2xl transition-all duration-300 ${
-                      selectedSchool?.id === school.id
-                        ? "bg-violet-500/20"
-                        : "bg-white/10"
-                    }`}
+                    className="p-4 rounded-2xl cursor-pointer bg-white/10 hover:bg-violet-500/20 transition-all"
                   >
                     <h4 className="font-semibold">{school.name}</h4>
                     <p className="text-sm opacity-70">{school.address}</p>
@@ -276,15 +254,13 @@ function App() {
                         Delete
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Map */}
-            <div className={`rounded-3xl p-4 shadow-2xl border border-white/10 backdrop-blur-xl ${
-              darkMode ? "bg-white/5" : "bg-white/80"
-            }`}>
+            <div className="rounded-3xl p-4 shadow-2xl border border-white/10 backdrop-blur-xl bg-white/5">
               <h3 className="text-2xl font-bold mb-4">Live Map</h3>
 
               {selectedSchool ? (
@@ -305,7 +281,7 @@ function App() {
         </main>
       </div>
 
-      {/* Modal */}
+      {/* Edit Modal */}
       {editingSchool && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white text-slate-900 rounded-3xl p-8 w-[420px] shadow-2xl">
