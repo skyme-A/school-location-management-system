@@ -79,21 +79,6 @@ export default function App() {
           : "bg-gradient-to-br from-[#f8f7ff] via-[#ffffff] to-[#eef2ff] text-slate-900"
       }`}
     >
-      {/* Floating Toggle */}
-      <div className="fixed top-6 right-6 z-50">
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className={`px-5 py-3 rounded-2xl backdrop-blur-xl shadow-xl transition-all duration-300 hover:scale-105 ${
-            darkMode
-              ? "bg-white/10 text-white hover:bg-white/20"
-              : "bg-white/80 text-slate-900 hover:bg-white"
-          }`}
-        >
-          {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-        </button>
-      </div>
-
-      {/* Glow */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/20 blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full"></div>
 
@@ -101,7 +86,7 @@ export default function App() {
 
         {/* Sidebar */}
         <aside
-          className={`w-72 p-8 border-r backdrop-blur-xl ${
+          className={`w-64 p-8 border-r backdrop-blur-xl ${
             darkMode
               ? "border-white/10 bg-white/5"
               : "border-slate-200 bg-white/60"
@@ -140,26 +125,42 @@ export default function App() {
         {/* Main */}
         <main className="flex-1 p-10">
 
-          <div className="mb-10 flex justify-between items-center">
+          {/* Clean Header */}
+          <div className="mb-10 flex justify-between items-start">
             <div>
-              <h2 className="text-5xl font-black">School Dashboard</h2>
-              <p className={`${darkMode ? "text-slate-300" : "text-slate-500"} mt-2 text-lg`}>
-                Premium responsive dashboard with dark/light theme, live search, CRUD integration, embedded maps, and production deployment.
+              <h2 className="text-5xl font-black leading-tight">School Dashboard</h2>
+
+              <p className={`${darkMode ? "text-slate-300" : "text-slate-500"} mt-3 text-lg`}>
+                Premium school location manager
               </p>
+
+              <div
+                className={`inline-block mt-4 px-4 py-2 rounded-xl ${
+                  darkMode ? "bg-white/10" : "bg-white shadow"
+                }`}
+              >
+                {schools.length} Active Schools
+              </div>
             </div>
 
-            <div className={`px-4 py-2 rounded-xl ${
-              darkMode ? "bg-white/10" : "bg-white shadow"
-            }`}>
-              {schools.length} Active
-            </div>
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className={`px-5 py-3 rounded-2xl backdrop-blur-xl shadow-xl transition-all duration-300 hover:scale-105 ${
+                darkMode
+                  ? "bg-white/10 text-white hover:bg-white/20"
+                  : "bg-white/80 text-slate-900 hover:bg-white"
+              }`}
+            >
+              {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            </button>
           </div>
 
+          {/* Main Grid */}
           <div className="grid lg:grid-cols-2 gap-10 items-start">
 
             {/* Add School */}
             <div
-              className={`rounded-3xl p-8 backdrop-blur-xl shadow-2xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 ${
+              className={`rounded-3xl p-8 min-h-[620px] backdrop-blur-xl shadow-2xl hover:-translate-y-1 transition-all duration-300 ${
                 darkMode
                   ? "bg-white/10 border border-white/10"
                   : "bg-white/80 border border-slate-200"
@@ -190,7 +191,7 @@ export default function App() {
 
                 <button
                   onClick={addSchool}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 font-semibold text-white hover:scale-[1.02] hover:shadow-xl transition-all duration-300"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 font-semibold text-white hover:scale-[1.02] transition-all duration-300"
                 >
                   Add School
                 </button>
@@ -199,7 +200,7 @@ export default function App() {
 
             {/* Saved Schools */}
             <div
-              className={`rounded-3xl p-8 backdrop-blur-xl shadow-2xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 ${
+              className={`rounded-3xl p-8 min-h-[620px] backdrop-blur-xl shadow-2xl hover:-translate-y-1 transition-all duration-300 ${
                 darkMode
                   ? "bg-white/10 border border-white/10"
                   : "bg-white/80 border border-slate-200"
@@ -207,10 +208,10 @@ export default function App() {
             >
               <h3 className="text-2xl font-bold mb-6">Saved Schools</h3>
 
-              <div className="space-y-5 max-h-[650px] overflow-y-auto pr-2">
+              <div className="space-y-5 max-h-[520px] overflow-y-auto pr-2">
 
                 {filteredSchools.length === 0 && (
-                  <div className="text-center py-20 opacity-60">
+                  <div className="flex items-center justify-center h-[400px] opacity-50 text-lg">
                     No schools added yet 📍
                   </div>
                 )}
@@ -250,12 +251,9 @@ export default function App() {
             </div>
 
           </div>
-
-          <div className="mt-10 text-center opacity-50 text-sm">
-            Built with React + Node + MySQL
-          </div>
         </main>
       </div>
     </div>
   );
 }
+       
