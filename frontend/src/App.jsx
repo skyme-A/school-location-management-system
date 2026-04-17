@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -19,23 +19,24 @@ function App() {
     longitude: "",
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-
   useEffect(() => {
     fetchSchools();
   }, []);
 
   const fetchSchools = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const res = await axios.get(`${API}/listSchools`);
       setSchools(res.data);
-      if (res.data.length) setSelectedSchool(res.data[0]);
+
+      if (res.data.length > 0) {
+        setSelectedSchool(res.data[0]);
+      }
     } catch {
       toast.error("Failed to fetch schools");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const addSchool = async () => {
@@ -46,6 +47,7 @@ function App() {
 
     try {
       await axios.post(`${API}/addSchool`, form);
+
       toast.success("School added");
 
       setForm({
@@ -62,7 +64,7 @@ function App() {
   };
 
   const deleteSchool = async (id) => {
-    if (!window.confirm("Delete this school?")) return;
+    if (!window.confirm("Delete school?")) return;
 
     try {
       await axios.delete(`${API}/deleteSchool/${id}`);
@@ -90,39 +92,9 @@ function App() {
     );
   }, [schools, search]);
 
-  const totalPages = Math.ceil(filteredSchools.length / itemsPerPage);
-
-  const paginatedSchools = filteredSchools.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const exportCSV = () => {
-    const rows = [
-      ["Name", "Address", "Latitude", "Longitude"],
-      ...schools.map((s) => [s.name, s.address, s.latitude, s.longitude]),
-    ];
-
-    const csv = rows.map((r) => r.join(",")).join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "schools.csv";
-    a.click();
-  };
-
-  const nearestSchool = schools.length
-    ? schools.reduce((prev, curr) =>
-        Math.abs(curr.latitude) < Math.abs(prev.latitude) ? curr : prev
-      )
-    : null;
-
   return (
     <div
-      className={`min-h-screen transition-all duration-700 relative overflow-hidden ${
+      className={`min-h-screen transition-all duration-500 ${
         darkMode
           ? "bg-slate-950 text-white"
           : "bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-slate-900"
@@ -130,13 +102,13 @@ function App() {
     >
       <Toaster position="top-right" />
 
-      <div className="absolute top-0 left-0 w-[420px] h-[420px] bg-violet-500/20 blur-3xl rounded-full"></div>
-      <div className="absolute bottom-0 right-0 w-[420px] h-[420px] bg-blue-500/20 blur-3xl rounded-full"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-violet-500/20 blur-3xl rounded-full"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full"></div>
 
       <div className="relative flex min-h-screen">
 
         {/* Sidebar */}
-        <aside className="w-72 p-6 border-r bg-white/5 backdrop-blur-xl border-white/10">
+        <aside className="w-72 p-6 border-r border-white/10 bg-white/5 backdrop-blur-xl">
           <h1 className="text-2xl font-black mb-8">🏫 SchoolOS</h1>
 
           <div className="space-y-4">
@@ -145,25 +117,11 @@ function App() {
               <h2 className="text-3xl font-bold">{schools.length}</h2>
             </div>
 
-            <div className="p-4 rounded-2xl bg-emerald-500/20">
-              <p className="text-sm">Nearest School</p>
-              <h3 className="font-bold">
-                {nearestSchool ? nearestSchool.name : "—"}
-              </h3>
-            </div>
-
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-full py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-all"
+              className="w-full py-3 rounded-2xl bg-white/10 hover:bg-white/20"
             >
               {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
-
-            <button
-              onClick={exportCSV}
-              className="w-full py-3 rounded-2xl bg-blue-500/20"
-            >
-              Export CSV
             </button>
           </div>
         </aside>
@@ -172,9 +130,7 @@ function App() {
         <main className="flex-1 p-8">
 
           <div>
-            <h2 className="text-5xl md:text-6xl font-black tracking-tight mb-2">
-              School Dashboard
-            </h2>
+            <h2 className="text-5xl font-black mb-2">School Dashboard</h2>
             <p className={`${darkMode ? "text-slate-400" : "text-slate-600"}`}>
               Smart school location management platform
             </p>
@@ -182,8 +138,8 @@ function App() {
 
           <div className="grid lg:grid-cols-3 gap-8 mt-8">
 
-            {/* Form */}
-            <div className="rounded-3xl p-6 shadow-2xl border border-white/10 backdrop-blur-xl bg-white/5">
+            {/* Add School */}
+            <div className="rounded-3xl p-6 shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
               <h3 className="text-2xl font-bold mb-5">Add School</h3>
 
               <div className="space-y-4">
@@ -198,7 +154,7 @@ function App() {
                         [field]: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/10 focus:ring-2 focus:ring-violet-500 outline-none"
+                    className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/10 outline-none"
                   />
                 ))}
 
@@ -211,10 +167,9 @@ function App() {
               </div>
             </div>
 
-            {/* List */}
-            <div className="rounded-3xl p-6 shadow-2xl border border-white/10 backdrop-blur-xl bg-white/5">
-              <h3 className="text-2xl font-bold">Schools</h3>
-              <p className="text-sm opacity-60 mb-4">Manage registered locations</p>
+            {/* Schools List */}
+            <div className="rounded-3xl p-6 shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+              <h3 className="text-2xl font-bold mb-4">Schools</h3>
 
               <input
                 placeholder="Search..."
@@ -223,44 +178,48 @@ function App() {
                 className="w-full px-4 py-3 rounded-2xl mb-4 border border-white/10 bg-white/10"
               />
 
-              <div className="space-y-3 max-h-[420px] overflow-y-auto">
-                {paginatedSchools.map((school) => (
-                  <div
-                    key={school.id}
-                    onClick={() => setSelectedSchool(school)}
-                    className="p-4 rounded-2xl cursor-pointer bg-white/10 hover:bg-violet-500/20 transition-all"
-                  >
-                    <h4 className="font-semibold">{school.name}</h4>
-                    <p className="text-sm opacity-70">{school.address}</p>
+              {loading ? (
+                <div className="text-center py-12 opacity-60">Loading...</div>
+              ) : (
+                <div className="space-y-3 max-h-[420px] overflow-y-auto">
+                  {filteredSchools.map((school) => (
+                    <div
+                      key={school.id}
+                      onClick={() => setSelectedSchool(school)}
+                      className="p-4 rounded-2xl bg-white/10 hover:bg-violet-500/20 cursor-pointer transition-all"
+                    >
+                      <h4 className="font-semibold">{school.name}</h4>
+                      <p className="text-sm opacity-70">{school.address}</p>
 
-                    <div className="flex gap-2 mt-3">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingSchool(school);
-                        }}
-                        className="px-3 py-1 rounded-lg bg-blue-500/20 text-sm"
-                      >
-                        Edit
-                      </button>
+                      <div className="flex gap-2 mt-3">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingSchool(school);
+                          }}
+                          className="px-3 py-1 rounded-lg bg-blue-500/20 text-sm"
+                        >
+                          Edit
+                        </button>
 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteSchool(school.id);
-                        }}
-                        className="px-3 py-1 rounded-lg bg-red-500/20 text-sm"
-                      >
-                        Delete
-                      </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteSchool(school.id);
+                          }}
+                          className="px-3 py-1 rounded-lg bg-red-500/20 text-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Map */}
-            <div className="rounded-3xl p-4 shadow-2xl border border-white/10 backdrop-blur-xl bg-white/5">
+            <div className="rounded-3xl p-4 shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
               <h3 className="text-2xl font-bold mb-4">Live Map</h3>
 
               {selectedSchool ? (
