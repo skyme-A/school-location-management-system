@@ -73,13 +73,12 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen overflow-x-hidden transition-all duration-500 ${
+      className={`min-h-screen transition-all duration-500 ${
         darkMode
           ? "bg-gradient-to-br from-[#160024] via-[#2d0050] to-[#3b0080] text-white"
           : "bg-gradient-to-br from-[#f8f7ff] via-[#ffffff] to-[#eef2ff] text-slate-900"
       }`}
     >
-      {/* Glow */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/20 blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/15 blur-3xl rounded-full"></div>
 
@@ -93,9 +92,11 @@ export default function App() {
               : "border-slate-200 bg-white/60"
           }`}
         >
-          <h1 className="text-3xl font-black mb-10 tracking-tight">🏫 SchoolOS</h1>
+          <h1 className="text-3xl font-black mb-10 tracking-tight bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+            🏫 SchoolOS Pro
+          </h1>
 
-          <div className="space-y-5">
+          <div className="space-y-6">
 
             <div className="p-5 rounded-3xl bg-gradient-to-r from-purple-600 to-blue-600 shadow-2xl hover:-translate-y-1 transition-all duration-300">
               <p className="opacity-80">Total Schools</p>
@@ -124,7 +125,7 @@ export default function App() {
         </aside>
 
         {/* Main */}
-        <main className="flex-1 px-12 pt-16 pb-10 max-w-[1400px] mx-auto w-full">
+        <main className="flex-1 px-12 pt-10 pb-10 max-w-[1400px] mx-auto w-full">
 
           {/* Header */}
           <div className="mb-10 flex justify-between items-start">
@@ -159,11 +160,11 @@ export default function App() {
           </div>
 
           {/* Grid */}
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
+          <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 items-start">
 
             {/* Add School */}
             <div
-              className={`rounded-3xl p-8 min-h-[620px] hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_60px_rgba(0,0,0,0.18)] ${
+              className={`rounded-3xl p-8 min-h-[540px] hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_60px_rgba(0,0,0,0.18)] ${
                 darkMode
                   ? "bg-white/8 backdrop-blur-2xl border border-white/10"
                   : "bg-white/80 border border-slate-200"
@@ -171,7 +172,7 @@ export default function App() {
             >
               <h3 className="text-2xl font-bold mb-6">Add New School</h3>
 
-              <div className="space-y-4">
+              <div className="space-y-5 mt-6">
 
                 {["name", "address", "latitude", "longitude"].map((field) => (
                   <input
@@ -203,7 +204,7 @@ export default function App() {
 
             {/* Saved Schools */}
             <div
-              className={`rounded-3xl p-8 min-h-[620px] hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_60px_rgba(0,0,0,0.18)] ${
+              className={`rounded-3xl p-8 min-h-[540px] hover:-translate-y-1 transition-all duration-300 shadow-[0_20px_60px_rgba(0,0,0,0.18)] ${
                 darkMode
                   ? "bg-white/8 backdrop-blur-2xl border border-white/10"
                   : "bg-white/80 border border-slate-200"
@@ -211,10 +212,10 @@ export default function App() {
             >
               <h3 className="text-2xl font-bold mb-6">Saved Schools</h3>
 
-              <div className="space-y-5 max-h-[520px] overflow-y-auto pr-2">
+              <div className="space-y-5 max-h-[440px] overflow-y-auto pr-2">
 
                 {filteredSchools.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-[420px] opacity-50">
+                  <div className="flex flex-col items-center justify-center h-[360px] opacity-50">
                     <div className="text-5xl mb-3">📍</div>
                     <div className="text-lg">No schools added yet</div>
                   </div>
@@ -232,7 +233,6 @@ export default function App() {
                     <div className="space-y-2">
                       <h4 className="text-lg font-bold">{school.name}</h4>
                       <p className="opacity-70">{school.address}</p>
-
                       <div className="text-sm opacity-60">
                         Lat: {school.latitude} | Lng: {school.longitude}
                       </div>
